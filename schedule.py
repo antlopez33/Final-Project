@@ -4,10 +4,13 @@ import sqlite3
 
 class Catalog:
     def __init__(self, url, driver_path, search_bar_id, search_button_id):
-        pass
+        self.url = url
+        self.driver_path = driverPath
+        self.search_bar_id = searchBarID
+        self.search_button_id = searchButtonID
 
     def search(self, keyword):
-        pass
+        self.keyword = keyword
 
     def extract_courses(self):
         pass
@@ -26,6 +29,19 @@ class Course:
 
     def to_dict(self):
         return
+    
+class Database:
+    def __init__(self, database_name):
+        self.database_name = databaseName
+        
+    def connect(self):
+        pass
+    
+    def create_tables(self):
+        pass
+    
+    def insert_course(self, course):
+        self.course = course
 
 def main(keywords):
     pass
