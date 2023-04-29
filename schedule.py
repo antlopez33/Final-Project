@@ -36,16 +36,27 @@ class Course:
 
     def to_dict(self):
         """ Returns the course information as a dictionary """ 
-        return
+        return {
+            "section": self.section,
+            "title": self.title,
+            "credits": self.credits,
+            "description": self.description,
+            "prerequisites": self.prerequisites,
+            "department": self.department,
+            "seats": self.seats,
+            "time": self.time,
+            "location": self.location,
+        }
     
 class Database:
     """ code for storing course information in a SQLite database """
     def __init__(self, database_name):
         self.database_name = databaseName
+        self.connection=None
         
     def connect(self):
         """ Connects to the database using database credentials defined in main.py """
-        pass
+        self.connection = sqlite3.connect(self.database_name)
     
     def create_tables(self):
         """ Creates the necessary tables in the database """ 
@@ -53,7 +64,8 @@ class Database:
     
     def insert_course(self, course):
         """ Inserts a single Course object into the database """
-        self.course = course
+        if not self.connection:
+            self.connect()
 
 def main(keywords):
     pass
