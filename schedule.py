@@ -1,24 +1,47 @@
 import argparse
 import sys
 import sqlite3
+import time
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 class Catalog:
     """ CLass to represent a university catalog website """
-    
     def __init__(self, url, driver_path, search_bar_id, search_button_id):
-        """ Initializes the class with the URL of the university catalog website and any necesssary web driver settings """
         self.url = url
-        self.driver_path = driverPath
-        self.search_bar_id = searchBarID
-        self.search_button_id = searchButtonID
+        self.driver_path = driver_path
+        self.search_bar_id = search_bar_id
+        self.search_button_id = search_button_id
 
-    def search(self, keyword):
-        """ Navigates to the search page of the university catalog website and searches for courses related to the given keyword """
-        self.keyword = keyword
+        # Create a new instance of the Chrome driver
+        self.driver = webdriver.Chrome(executable_path=self.driver_path)
 
-    def extract_courses(self):
-        """  Extracts course information from the search results page and returns it as a list of Course objects """
-        pass
+        # Navigate to the catalog page
+        self.driver.get(self.url)
+        time.sleep(3)
+        
+    def search(self, search_term):
+        # Find the search bar and enter the search term
+        search_bar = self.driver.find_element(By.ID, self.search_bar_id)
+        search_bar.clear()
+        search_bar.send_keys(search_term)
+
+        # Find the search button and click it
+        search_button = self.driver.find_element(By.ID, self.search_button_id)
+        search_button.click()
+        time.sleep(3)
+
+        # Wait for the search results to load
+        """WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.ID, "course-search-results"))
+            )"""
+        EC.presence_of_element_located((By.ID, "course-search-results"))
+    
+    def __del__(self):
+        # Close the browser window
+        self.driver.quit()
 
 class Course:
     """ Represents a course """
