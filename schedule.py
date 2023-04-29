@@ -90,8 +90,39 @@ class Database:
         if not self.connection:
             self.connect()
 
-def main(keywords):
-    pass
+def main(words):
+    catalog = Catalog(
+        url="https://app.testudo.umd.edu/soc/",
+        driver_path="./chromedriver.exe",
+        search_bar_id="course-id-input",
+        search_button_id="search-button"
+    )
+    department_list = []
+    time.sleep(3)
+    departments = catalog.driver.find_elements(By.XPATH, ".//div[@id='course-prefixes-page']//div[@class='course-prefix row']")
+    for department in departments:
+        department_list.append(department.find_element(By.XPATH, ".//span[@class='prefix-abbrev push_one two columns']").text)
+
+    # Search for each department and parse the course info based on keywords
+    for department_name in department_list:
+        # Search for the department
+        catalog.search(department_name)
+        time.sleep(3)
+
+        # Get all the courses
+        courses = catalog.driver.find_elements(By.XPATH, ".//div[@class='course']")
+
+        # Parse each course for keywords
+        for course in courses:
+            # Get the course title and description
+            title = course.find_element(By.XPATH, ".//span[@class='course-title']").text
+            description = course.find_element(By.XPATH, "//div[@class='row']//div[@class='approved-course-text']").text
+
+            # Check if any of the keywords are in the title or description
+            for keyword in words.keywords:
+                if keyword.lower() in title.lower() or keyword.lower() in description.lower():
+                    print(f"{department_name}: {title}")
+                    break
 
 def parse_args(args_list):
     """Takes a list of strings from the command prompt and passes them through as arguments
