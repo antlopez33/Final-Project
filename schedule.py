@@ -4,7 +4,7 @@ import sqlite3
 import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 class Catalog:
@@ -20,7 +20,7 @@ class Catalog:
 
         # Navigate to the catalog page
         self.driver.get(self.url)
-        time.sleep(3)
+        time.sleep(1)
         
     def search(self, search_term):
         # Find the search bar and enter the search term
@@ -31,12 +31,9 @@ class Catalog:
         # Find the search button and click it
         search_button = self.driver.find_element(By.ID, self.search_button_id)
         search_button.click()
-        time.sleep(3)
+        time.sleep(1)
 
         # Wait for the search results to load
-        """WebDriverWait(self.driver, 10).until(
-                EC.presence_of_element_located((By.ID, "course-search-results"))
-            )"""
         EC.presence_of_element_located((By.ID, "course-search-results"))
     
     def __del__(self):
