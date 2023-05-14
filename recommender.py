@@ -41,18 +41,46 @@ class Catalog:
         self.driver.quit()
 
 class Course:
-    """ Represents a course """
-    def __init__(self, section, title, credits, description, prerequisites, department, seats, time, location):
-        """ Initializes the class with the course information """
-        self.section = section
+    """
+    A class representing a course.
+
+    Attributes:
+    - course_id(int): identifier for the course.
+    - title(str): title of the course.
+    - credits(int): credits of each course.
+    - description(str): brief description of the course.
+    - prerequisites(list): string list of prerequisites required for course.
+    - department(str): department course is a part of.
+    - sections(list): string list of the section a course is a part of.
+    """
+    def __init__(self, course_id, title, credits, description, prerequisites, department, sections):
+        self.course_id = course_id
         self.title = title
         self.credits = credits
         self.description = description
         self.prerequisites = prerequisites
         self.department = department
+        self.sections = sections
+
+
+class Section:
+    """
+    A class representing a section of a course.
+
+    Attributes:
+    - section_number(int): unique section number.
+    - instructor(str): instructor teaching course section.
+    - seats(int): number of seats in the section.
+    - section_time(str): time the section is.
+    - location(str): location of the section.
+    """
+    def __init__(self, section_number, instructor, seats, section_time, location):
+        self.section_number = section_number
+        self.instructor = instructor
         self.seats = seats
-        self.time = time
+        self.section_time = section_time
         self.location = location
+
 
     def to_dict(self):
         """ Returns the course information as a dictionary """ 
