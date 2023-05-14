@@ -19,7 +19,29 @@ def test_course():
     assert course.prerequisites == "Corequisite: MATH140. Credit only granted for: CMSC131, CMSC133, or IMDM127."
     assert course.department == "CMSC"
     assert course.sections == []
+def test_section():
+    section = Section("0101", "Nelson Padua-Perez", "Seats (Total: 34, Open: 25, Waitlist: 0 )", "MWF 2:00pm - 2:50pm", "IRB 0324")
+    assert section.section_number == "0101"
+    assert section.instructor == "Nelson Padua-Perez"
+    assert section.seats == "Seats (Total: 34, Open: 25, Waitlist: 0 )"
+    assert section.section_time == "MWF 2:00pm - 2:50pm"
+    assert section.location == "IRB 0324"
+
+def test_database():
+    db = Database("courses.db")
+    assert isinstance(db.conn, sqlite3.Connection)
+    assert isinstance(db.cursor, sqlite3.Cursor)
+    db.conn.close()
+
+def test_search():
+    catalog = Catalog("https://app.testudo.umd.edu/soc/", "./chromedriver.exe", "course-id-input", "search-button")
+    catalog.search("CMSC")
+    assert catalog.driver.find_elements(By.CLASS_NAME, "course") is not None
+    catalog.__del__()
 
 if __name__ == "__main__":
     test_catalog()
     test_course()
+    test_section()
+    test_database()
+    test_search()
