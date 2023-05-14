@@ -19,6 +19,7 @@ def test_course():
     assert course.prerequisites == "Corequisite: MATH140. Credit only granted for: CMSC131, CMSC133, or IMDM127."
     assert course.department == "CMSC"
     assert course.sections == []
+    
 def test_section():
     section = Section("0101", "Nelson Padua-Perez", "Seats (Total: 34, Open: 25, Waitlist: 0 )", "MWF 2:00pm - 2:50pm", "IRB 0324")
     assert section.section_number == "0101"
