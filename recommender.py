@@ -80,29 +80,12 @@ class Section:
         self.seats = seats
         self.section_time = section_time
         self.location = location
-
-
-    def to_dict(self):
-        """ Returns the course information as a dictionary """ 
-        return {
-            "section": self.section,
-            "title": self.title,
-            "credits": self.credits,
-            "description": self.description,
-            "prerequisites": self.prerequisites,
-            "department": self.department,
-            "seats": self.seats,
-            "time": self.time,
-            "location": self.location,
-        }
     
 class Database:
     #Represents a SQLite database for storing course and section information
 
     def __init__(self, db_path):
         #Initializes the Database class with the path to the SQLite database file
-
-        
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
 
