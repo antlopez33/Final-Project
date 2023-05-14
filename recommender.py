@@ -69,23 +69,56 @@ class Course:
         }
     
 class Database:
-    """ code for storing course information in a SQLite database """
-    def __init__(self, database_name):
-        self.database_name = databaseName
-        self.connection=None
+    #Represents a SQLite database for storing course and section information
+
+    def __init__(self, db_path):
+        #Initializes the Database class with the path to the SQLite database file
+
         
-    def connect(self):
-        """ Connects to the database using database credentials defined in main.py """
-        self.connection = sqlite3.connect(self.database_name)
-    
+        self.conn = sqlite3.connect(db_path)
+        self.cursor = self.conn.cursor()
+
     def create_tables(self):
-        """ Creates the necessary tables in the database """ 
-        pass
-    
-    def insert_course(self, course):
-        """ Inserts a single Course object into the database """
-        if not self.connection:
-            self.connect()
+        #Creates the necessary tables in the database
+        self.cursor.execute('''DROP TABLE IF EXISTS courses''')
+        self.cursor.execute('''CREATE TABLE courses
+            (course_id TEXT PRIMARY KEY,
+            title TEXT,
+            credits INTEGER,
+            description TEXT,
+            prerequisites TEXT,
+            department TEXT)''')
+        self.conn.commit()
+
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS sections (
+            section_number INTEGER PRIMARY KEY,
+            course_id TEXT,
+            instructor TEXT,
+            seats TEXT,
+            section_time TEXT,
+            location TEXT,
+            FOREIGN KEY(course_id) REFERENCES courses(course_id)
+        )''')
+
+        self.conn.commit()
+
+    def add_course(self, course):
+        #Adds a course to the courses table in the database
+        try:
+            self.cursor.execute('''INSERT INTO courses (course_id, title, credits, description, prerequisites, department) VALUES (?, ?, ?, ?, ?, ?)''', (course.course_id, course.title, course.credits, course.description, course.prerequisites, course.department))
+            self.conn.commit()
+        except sqlite3.IntegrityError:
+            print(f"Course {course.course_id} already exists in database")
+
+    def add_section(self, section_number, course_id, instructor, seats, section_time, location):
+        #Adds a section to the sections table in the database
+        try:
+            self.cursor.execute('''INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?)''', (section_number, course_id, instructor, seats, section_time, location))
+            self.conn.commit()
+            print(f"Added section {section_number} of course {course_id}")
+        except sqlite3.IntegrityError:
+            print(f"Section{section_number} of course already exists in database")
+          
 
 def main(words):
     catalog = Catalog(
