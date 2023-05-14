@@ -8,27 +8,52 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support import expected_conditions as EC
 
 class Catalog:
-    """ CLass to represent a university catalog website """
+    """
+    A class representing a university catalog website(UMD SOC)
+
+    Attributes:
+        url(str): the url of website (in this case being UMD SOC)
+        driver_path(str): The path to the Chrome driver
+        search_bar_id(str): The ID of the search bar on the UMD SOC website 
+        search_button_id(str): The ID of the search button on the UMD SOC website
+    """
     def __init__(self, url, driver_path, search_bar_id, search_button_id):
+        """
+        Initializes catalog and creates a instance of the Chrome driver
+
+        Args:
+            url(str): the url of website (in this case being UMD SOC)
+            driver_path(str): The path to the Chrome driver
+            search_bar_id(str): The ID of the search bar on the UMD SOC website 
+            search_button_id(str): The ID of the search button on the UMD SOC website
+
+        Returns:
+            None
+        """
         self.url = url
         self.driver_path = driver_path
         self.search_bar_id = search_bar_id
         self.search_button_id = search_button_id
 
-        # Create a new instance of the Chrome driver
         self.driver = webdriver.Chrome(executable_path=self.driver_path)
 
-        # Navigate to the catalog page
         self.driver.get(self.url)
         time.sleep(1)
         
     def search(self, search_term):
-        # Find the search bar and enter the search term
+        """
+        Finds the search bar and enter the search term
+
+        Args:
+            search_term(str): the search term is the department being searched
+
+        Returns:
+            None
+        """
         search_bar = self.driver.find_element(By.ID, self.search_bar_id)
         search_bar.clear()
         search_bar.send_keys(search_term)
 
-        # Find the search button and click it
         search_button = self.driver.find_element(By.ID, self.search_button_id)
         search_button.click()
         time.sleep(1)
@@ -82,15 +107,33 @@ class Section:
         self.location = location
     
 class Database:
-    #Represents a SQLite database for storing course and section information
+    """
+    A class representing a SQLite database for storing course and section information
+
+    Attributes:
+        db_path(str): path to the database file
+    """
 
     def __init__(self, db_path):
-        #Initializes the Database class with the path to the SQLite database file
+        """
+        Initializes the Database class with the path to the SQLite database file
+
+        Args:
+            db_path(str): path to the database file
+
+        Returns:
+            None
+        """
         self.conn = sqlite3.connect(db_path)
         self.cursor = self.conn.cursor()
 
     def create_tables(self):
-        #Creates the necessary tables in the database
+        """
+        Creates the necessary tables in the database
+
+        Returns:
+            None
+        """
         self.cursor.execute('''DROP TABLE IF EXISTS courses''')
         self.cursor.execute('''CREATE TABLE courses
             (course_id TEXT PRIMARY KEY,
@@ -114,7 +157,15 @@ class Database:
         self.conn.commit()
 
     def add_course(self, course):
-        #Adds a course to the courses table in the database
+        """
+        Adds a course to the courses table in the database
+
+        Args:
+            course(Course Object): the course that contains keywords
+
+        Returns:
+            None
+        """
         try:
             self.cursor.execute('''INSERT INTO courses (course_id, title, credits, description, prerequisites, department) VALUES (?, ?, ?, ?, ?, ?)''', (course.course_id, course.title, course.credits, course.description, course.prerequisites, course.department))
             self.conn.commit()
@@ -122,7 +173,20 @@ class Database:
             print(f"Course {course.course_id} already exists in database")
 
     def add_section(self, section_number, course_id, instructor, seats, section_time, location):
-        #Adds a section to the sections table in the database
+        """
+        Adds a section to the sections table in the database
+
+        Args:
+            section_number(str): string of section number
+            course_id(str): the course that this section is for
+            instructor(str): the instructor of the section
+            seats(str): the seats including open, total, and waitlisted
+            section_time(str): the times and days that the section is
+            location(str): the building code and room number
+
+        Returns:
+            None
+        """
         try:
             self.cursor.execute('''INSERT INTO sections VALUES (?, ?, ?, ?, ?, ?)''', (section_number, course_id, instructor, seats, section_time, location))
             self.conn.commit()
@@ -132,6 +196,16 @@ class Database:
           
 
 def main(keywords, department_list):
+    """
+    Main function for scraping course data from the University of Maryland Schedule of Classes.
+
+    Args:
+        keywords(List): List of keywords to search for in course titles and descriptions.
+        department_list(List): List of departments to search for courses in.
+
+    Returns:
+        None
+    """
     catalog = Catalog(
         url="https://app.testudo.umd.edu/soc/",
         driver_path="./chromedriver.exe",
